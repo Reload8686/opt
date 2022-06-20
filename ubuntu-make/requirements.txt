@@ -1,0 +1,17 @@
+# runtime requirements
+-e bzr+lp:python-apt/@0.9.3.5#egg=apt
+argcomplete
+beautifulsoup4
+progressbar
+pyyaml
+requests
+pyxdg
+python-gnupg
+
+# test tools
+nose
+nose-cov
+nose-json
+pep8
+pexpect>=4.0
+

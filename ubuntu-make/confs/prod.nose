@@ -1,0 +1,5 @@
+[nosetests]
+with-cov=1
+cov=umake
+cov-report=term-missing,html,xml
+cov-config=confs/coverage.cov

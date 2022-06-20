@@ -1,0 +1,11 @@
+#!/bin/bash
+# Author: Didier Roche <didrocks@ubuntu.com>
+set -e
+. `dirname $0`/utils
+
+# skip tests if not requested
+skip_if_no_in_list
+
+run_tests medium
+
+publish_results

@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Canonical
+#
+# Authors:
+#  Didier Roche
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; version 3.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+from contextlib import suppress
+import os
+import signal
+import sys
+
+
+kill_process = sys.argv[1] == "True"
+process_grep = sys.argv[2:]
+for pid in os.listdir('/proc'):
+    if not pid.isdigit() or int(pid) == os.getpid():
+        continue
+    # ignore processes that are closed in between
+    with suppress(IOError):
+        cmdline = open(os.path.join('/proc', pid, 'cmdline'), 'r').read()
+        for process_elem in process_grep:
+            if process_elem not in cmdline or "run_in_umake_dir" in cmdline or sys.argv[0] in cmdline:
+                break
+        # we found it
+        else:
+            signal_to_send = signal.SIGTERM
+            if kill_process:
+                signal_to_send = signal.SIGKILL
+            os.kill(int(pid), signal_to_send)
+            sys.exit(0)
+sys.exit(1)

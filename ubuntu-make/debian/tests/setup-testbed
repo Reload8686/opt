@@ -1,0 +1,110 @@
+#!/bin/bash
+# setup an ubuntu-desktop machine with autologin and dependencies
+# Author: Didier Roche <didrocks@ubuntu.com>
+set -e
+. `dirname $0`/utils
+
+if [ -n "$ADT_REBOOT_MARK" ]; then
+    exit 0
+fi
+
+export DEBIAN_FRONTEND=noninteractive
+
+# configure docker
+sudo -n addgroup $(whoami) docker
+# the config file isn't a pam file (shouldn't have export) when used from the
+# service file under systemd
+if [ -d /run/systemd/system/ ]; then
+    grep proxy /etc/environment | sudo -n tee -a /etc/default/docker
+else
+    # this is sourced for sysv init scripts
+    sed -n '/proxy/ { s/^/export /; p}' /etc/environment | sudo -n tee -a /etc/default/docker
+fi
+# ensure we have a cgroup controller installed (systemd for wily and on, cgroup-lite for trusty)
+if ! `dpkg -l systemd-sysv 1>/dev/null 2>&1`; then
+    sudo -n apt --no-install-recommends install -y cgroup-lite
+fi
+
+# workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=808203
+sudo -n rm -f /etc/dpkg/dpkg.cfg.d/pkg-config-hook-config
+
+# enable xserver dummy driver
+sudo -n apt --no-install-recommends install -y xserver-xorg-video-dummy
+cat <<EOF | sudo tee /etc/X11/xorg.conf
+Section "Device"
+   Identifier "test"
+   Driver "dummy"
+EndSection
+EOF
+
+# enable autologin to get unity started
+if [ ! -r /etc/lightdm/lightdm.conf.d/umaketests.conf ]; then
+    sudo -n mkdir -p /etc/lightdm/lightdm.conf.d
+    cat << EOF | sudo -n tee /etc/lightdm/lightdm.conf.d/umaketests.conf
+[SeatDefaults]
+autologin-user=ubuntu
+EOF
+fi
+
+# enable localhost ssh connection without pass
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+# install ubuntu-make if we are running system tests, otherwise install only deps from debian/control
+if [ "$(is_package_test)" = "true" ]; then
+    PACKAGES="ubuntu-make"
+else
+    PACKAGES=$(tests/daily_runs/get_binary_depends ubuntu-make)
+fi
+sudo -n -E apt install -y $PACKAGES
+
+# store ubuntu make version and packages
+config_dir="$ADT_ARTIFACTS/config"
+mkdir -p $config_dir
+
+# discover target: package/branch, origin
+if [ "$(is_package_test)" = "true" ]; then
+    # clean the source package to ensure we don't have duplicated files after
+    # build for sloccount
+    debian/rules clean
+    type="system"
+    origin="$(apt-cache policy ubuntu-make | sed -n '/\*\*\*/ {n;p}' | cut -d' ' -f 10)"
+    [ -z "$origin" ] && origin="Local package"
+    version="$(umake --version)'"
+else
+    type="branch"
+    upstream_short="$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))"
+    IFS=/ read repo branch <<< $upstream_short
+    repo_url=$(git config --get remote.${repo}.url)
+    origin="${repo_url} $branch"
+    version="$(bin/umake --version)'"
+fi
+
+cat << EOF | tee "$config_dir/version"
+{
+    'target': {
+       'type': '$type',
+       'origin': '$origin',
+       'version': '$version',
+    },
+    'date': {
+        'timestamp': '$(date +%s)',
+        'utc': '$(date -u)'
+    },
+    'arch': '$(arch)'
+}
+EOF
+dpkg -l > "$config_dir/packages_list"
+
+echo -e "\nStats:"
+sloccount * | head -n -17 | tail -17 | tee "$config_dir/stats"
+
+# remove umake directory for coverage reporting on real used files
+if [ "$type" = "system" ]; then
+    rm -r umake/
+fi
+# compile local python file under current user to avoid some root-owned compile
+# file like for local server
+python3 -m compileall .
+
+sudo -n /tmp/autopkgtest-reboot ready

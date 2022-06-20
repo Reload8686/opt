@@ -1,0 +1,95 @@
+#!/bin/bash
+# Author: Didier Roche <didrocks@ubuntu.com>
+
+coverage_dir=/tmp/global-coverage
+
+# publish test results for given test run. Keep a secondary coverage copy (as the first one is cleaned) for collect step
+function publish_results {
+    test_type=$(basename $0)
+    output_dir="$ADT_ARTIFACTS/$test_type"
+    mkdir -p $output_dir
+
+    mv nosetests.* ${output_dir}
+    mv .coverage ${output_dir}
+    mv *coverage* ${output_dir}
+    mv *.log ${output_dir}
+
+    mkdir -p $coverage_dir
+    cp ${output_dir}/.coverage ${coverage_dir}/.coverage.${test_type}
+}
+
+# this function need to be run in ubuntu make directory"
+function is_package_test {
+    if [ -d ".git" ]; then
+        echo "false"
+        return
+    fi
+    echo "true"
+}
+
+# add --system if we run from a package dir
+function add_runtests_opts {
+    if [ "$(is_package_test)" = true ]; then
+        echo "--system"
+        return
+    fi
+}
+
+# skip current test if not "all" or in the list of $TESTS
+# if the test variable is empty, we still want to run some tests as per of package testing
+function skip_if_no_in_list {
+    # tests to run if nothing was provided
+    [ -z "$TESTS" ] && TESTS="small"
+
+    test_type=$(basename $0)
+
+    re=\\btests[\./]
+    # we are in the custom type test flavor
+    if [[ "$test_type" = "custom" ]]; then
+        if [[ "$TESTS" =~ $re ]]; then
+            return
+        else
+            echo "No specific mentioned in \$TESTS; skipping test"
+            exit 0
+        fi
+    fi
+
+    # if we run only some tests of the current type, (tests.<type>.), disable all and this category
+    if [[ "$TESTS" =~ $re ]]; then
+        echo "Specific tests required, skipping general ones."
+        exit 0
+    fi
+
+    retype=\\b${test_type}\\b
+    reall=\\ball\\b
+    if [[ "$TESTS" =~ $retype ]] || [[ "$TESTS" =~ $reall ]]; then
+        return
+    fi
+    echo "$test_type isn't mentioned in \$TESTS; skipping test"
+    exit 0
+}
+
+# we need to run in a ssh subshell to get a real terminal connexion so that ssh can returns when subprocess are killed
+function run_tests {
+    ssh -o StrictHostKeyChecking=no -t -t 127.0.0.1 "cd $PWD; DISPLAY=:0 dbus-launch ./runtests --publish --coverage $(add_runtests_opts) $@"
+}
+
+# wait for compiz to start, exit 1 after a timeout if not running.
+function wait_for_compiz {
+    timeout=100
+    while [ ! `pgrep -c compiz` -gt 0 ]; do
+        if [ $timeout -le 0 ]; then
+            echo "compiz didn't start"
+            echo "------------- /var/log/lightdm/x-0.log -------------"
+            sudo -n cat  /var/log/lightdm/x-0.log || true
+            echo "------------- /var/log/lightdm/.lightdm.log -------------"
+            sudo -n cat  /var/log/lightdm/lightdm.log || true
+            echo "------------- ~/.xsession-errors -------------"
+            cat  ~/.xsession-errors || true
+            exit 1
+        fi
+        timeout=$((timeout - 5))
+        sleep 5
+        echo "waiting for compiz to start... (${timeout}s left)"
+    done
+}

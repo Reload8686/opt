@@ -1,0 +1,709 @@
+ubuntu-make (16.02.1) xenial; urgency=medium
+
+  [ Galileo Sartor ]
+  [ Didier Roche ]
+  * Fix Visual Studio Code to use permanent links as the website changed.
+    Adapt tests to it.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 10 Feb 2016 09:43:20 +0100
+
+ubuntu-make (16.02) xenial; urgency=medium
+
+  [ Galileo Sartor ]
+  * Add Nodejs support with always latest node and npm now available!
+  * Add Lighttable IDE support.
+  * Create symlinks in a bin/ directory which is now added to user's PATH
+    for each .desktop file created. That way, people can run their app
+    from the command line as well.
+  * All of those covered by small medium and large tests.
+
+  [ Patricio Pérez ]
+  * Add Spring Tools Suite and its testsuite.
+
+  [ Omer Sheikh ]
+  * Add JetBrains Datagrip with tests
+  * Add python-gnupg to requirements.txt.
+
+  [ Didier Roche ]
+  * Disable Visual Studio Code installation for now. Adapt tests for that
+    change.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 09 Feb 2016 08:47:49 +0100
+
+ubuntu-make (16.01.2) xenial; urgency=medium
+
+  [ Galileo Sartor ]
+  * Add swift lang support with according tests.
+  * Add support for Eclipse php with tests.
+  * Add support for Eclipse cpp with tests.
+
+  [ Evan McIntire ]
+  * dd manpage that is generated from the --help text.
+
+  [ Didier Roche ]
+  * Fix, and implements some testing for Swift, Eclipse php and cpp.
+  * Add gpg key support so that we can mock and add it to frameworks,
+    working around some uid != euid limitations.
+  * Compile local python file under current user name in tests.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 20 Jan 2016 17:38:39 -0800
+
+ubuntu-make (16.01.1) xenial; urgency=medium
+
+  * Fix Go support as of 1.5.3, they now publishes a sha256 instead of a sha1
+    checksum.
+  * Adapt tests to it.
+  * A lot of work on tests:
+    - add local/vm/remote args to runtests to easily run tests in locally,
+      in an adt environment or remotely on the official infrastructure.
+    - minimizing autopkgtests installation
+    - docker fixes with proxy for medium tests
+    - ensure we run with a dummy xorg driver
+    - ensure compiz is running before running large and custom tests
+    - fix TESTS=all triggering custom tests
+    - fix not installing ubuntu-make package itself for git tests
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 14 Jan 2016 12:26:52 +0100
+
+ubuntu-make (16.01) xenial; urgency=medium
+
+  [ Galileo Sartor ]
+  * Always deliver the latest Unity3D version (beta) to our users.
+  * Ensure we always download latest available eclipse java IDE version. This
+    enables users to now get eclipse Mars from Ubuntu Make!
+
+  [ Didier Roche ]
+  * Enable setting up Firefox Dev as default browser.
+  * Move Visual Studio Code to IDE category. Keep it still on the web category
+    for backward compatiblity. Adapts tests to ensure both category works
+    (with a warning on the web one).
+  * Move the testing infrastructure from jenkins to ubuntu autopkgtests:
+    - create pep8/small/medium/large/all targets to mimic runautopkgtests
+      behavior.
+    - add a setup test bed, installing an ubuntu-desktop image, grabbing
+      git branch or system package and generating stats info.
+    - add another collecting coverage test to generate and copy stats
+      to artefacts directory.
+    - a custom target is triggered when one or more specific tests are desired
+      like --env="TESTS=tests/small/<foo>.py
+      tests.small.foo:TestClass:test_bar".
+    - all those tests are handled by a TESTS env variable. If not set, we run
+      pep8 and small tests.
+    - creating utils and scripts to factorize most of the logic.
+  * Protect against invalid tar archive that can be opened but not fully
+    extracted.
+  * Remove libxp6 dep from Stencyl as optional and not available from wily.
+  * Install test dependencies from package and autopkgtests list.
+    Use that logic in both autopkgtest infra and jenkins.
+  * Make test_install_progress more robust as apt 1.1.5 changed its update
+    signaling behavior.
+  * Add in baseinstaller some way to only match last link when parsing.
+  * Rework foreign architecture addition and detection to ensure we only
+    call it once (we were calling them once per package previously), fix some
+    races in cache handling. Move this facility to tools and restructure tests
+     for this, while adding some more.
+  * Add locks to avoid a race condition when creating temp file (to not create
+    them as root) and add a new contextwrapper for as_root() with its tests.
+  * Drop sshpass in favor of ssh key for docker image connection.
+  * Some misc fixes:
+    - Change some error messages and making them localizable.
+    - fix an issue to avoid nested fakeroot calls.
+    - Ensure we always kill children process and not the wrapper in container.
+    - Add a fallback when os.getlogin() returns transient errors.
+    - Normalize end of line tests comparaison.
+    - Fix some possible failure when issuing a progressbar update.
+    - Restructure, decouple and grab additional mocks for tests
+    - Restore properly the initial environment in test_settings to avoid env
+      leaks bugs.
+    - Import cleanups.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 12 Jan 2016 09:39:08 +0100
+
+ubuntu-make (15.12.1) xenial; urgency=medium
+
+  [ Eldar Khayrullin ]
+  * Update Unity3D link to latest
+
+  [ Didier Roche ]
+  * Fix rust for their latest release as they changed rustlib directory
+  * Adapt rust medium assets
+  * Fix medium tests by changing unity server host
+  * Some tidy up on BeautifulSoup latest release
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 17 Dec 2015 07:36:45 +0100
+
+ubuntu-make (15.12) xenial; urgency=medium
+
+  * Fix JetBrain's based IDE due to their new website deployement:
+    - Use now their API directly.
+    - Adapt medium tests and assets to follow that new structure.
+  * Add a deprecation warning on udtc command (will be removed after 16.04 LTS)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 11 Dec 2015 10:52:53 +0100
+
+ubuntu-make (15.11.2) xenial; urgency=medium
+
+  [ Abigail Buccaneer ]
+  * Add JetBrains CLion C/C++ IDE support.
+
+  [ Eldar Khayrullin ]
+  * Complete Russian translation.
+
+  [ Translation team ]
+  * Refresh po files with latest community translations. Thanks to all our
+    translator community!
+
+  [ Didier Roche ]
+  * Add Twine game editor support.
+  * Ensure --help always show category help when following category, even
+    if it has default frameworks.
+  * Add tests (small/medium/large) to cover those.
+  * Add ZSH completion to the same level as bash completion.
+  * Fix visual studio icon which changed its path (detected thanks to our
+    testsuite).
+  * Add medium and large tests for CLion.
+  * Fallback to plain english if language support isn't fully installed.
+  * Fix incorrect pt_BR translations.
+  * Add better description for jetbrain IDEs.
+  * Create and move a bunch of Android tests to a mock BaseInstaller based
+    one. This enables us to cut large test time by a magnitude of 2. Using
+    that opportunity to add more tests and complete existing ones.
+  * Standardize language test bed to run in plain english whatever your
+    configuration is.
+  * Misc. tests enhancements and tools fixes.
+  * Move build dependencies only needed for tests to another ppa
+    (ppa:ubuntu-desktop/ubuntu-make-builddeps) and add it in jenkins tests.
+    This way, people using Ubuntu Make on older release are not impacted by
+    the need of newer version of tests frameworks like pexpect and won't
+    install them. Hook that ppa in Travis CI, our jenkins infra and refresh
+    contributor intro to ask adding that ppa for testing.
+  * Enhance our jenkins job for testing a pull request branch and other minor
+    test job enhancements.
+  * Update French translations.
+  * Update translation template for new and updated frameworks.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 24 Nov 2015 08:06:03 +0100
+
+ubuntu-make (15.11.1) xenial; urgency=medium
+
+  [ Fabio Colella ]
+  * Added support for Netbeans IDE, with possibility of extension to support
+    its flavours.
+  * Add large and initial support for medium tests.
+
+  [ Jared Ravetch ]
+  * Add Rust support, installing the latest rust compiler and tools version.
+  * Initial support for medium and large tests.
+  * Override GOROOT value instead of appending it (Go doesn't support GOROOT
+    having multiple values).
+
+  [ Eldar Khayrullin ]
+  * Update unity3d version up to 5.1.0f3+2015091501.
+
+  [ Sebastian Schuberth ]
+  * Change android NDK env variable to use NDK_ROOT instead of ANDROID_NDK.
+
+  [ Didier Roche ]
+  * Fix webstorm icon renamed upstream.
+  * Ship version file as part of the install (Now --version really works on
+    packaged flavor as well) + stamp generated binary with correct version.
+  * Fix BaseInstaller to not crash when all downloads assets are 404 + add
+    medium tests for this.
+  * Ensure -r global option behave like --remove.
+  * Some style, refactoring and formatting tidy up for recent merges and
+    changes.
+  * Add medium assets, certificates and additional failure test cases for
+    netbeans and rust.
+  * Update docker container for medium tests with new certificates.
+  * Readd Travis CI integration running pep8 and small tests (with badge
+    status and updated wording in README). New pushes and pull requests are
+    now automatically tested on those 2 kinds of tests.
+  * Fix and updates dependencies for package and pip virtualenv deps.
+  * Standardize the test environment so that people running tests using for
+    instance zsh are not impacted.
+  * Finish up shipping static files support for future frameworks.
+  * Using scala framework for loading tests and making autopkgtests pass on
+    armel64 (android not available on this arch).
+  * Improve releasing script and migrate gbp config to new headers.
+
+  [ Translators ]
+  * Refreshed translation template and updated translations. Thanks to all our
+    translators!
+    - new supported languages:
+      fa, pt_BR
+    - Updating the following languages:
+      de, en_AU, en_CA, en_GB, eu, hr, it, pl, ru, te, zh_CN, zh_HK
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 10 Nov 2015 09:12:26 +0100
+
+ubuntu-make (15.11) xenial; urgency=medium
+
+  [ Omer Sheikh ]
+  * Change default install path to ~/.local/share/umake/, depending on
+    $XDG_DATA_HOME.
+  * Add tests for those.
+  * Improve tests stability in different environment (particularly jenkins) by
+    creating wrapper around pexpect.spawnu. The wrapper sets the virtual
+    terminal dimensions before calling pexpect.spawnu. This is to solve the
+    problem of newline and carriage returns appearing in the stdout of created
+    processes when testing under jenkins.
+
+  [ Sebastian Schuberth ]
+  * Fix changelog name.
+  * Set the ANDROID_HOME and NDK_ROOT environment variables for android NDK
+    frameworks.
+
+  [ Jared Ravetch ]
+  * Fix user message when prompting user to restart shell session.
+
+  [ Didier Roche ]
+  * Add a --version option to print current ubuntu make version. The rules are:
+    - if the user is on a released version, then print this version
+    - if the user is on a git branch, use:
+      - version-#commits-shortsha1 if there is no local or staged changes
+      - version-#commits-shortsha1-dirty if there is some locals or staged
+        changes
+    - finally, if the user is a local checkout, but without git history, just
+      print: version+unknown
+  * Fix --remove when used before a category name. Now, you can properly
+    umake --remove <category> <framework> and the framework will be removed.
+  * Fix framework env variables not removed for zsh shells on --remove.
+  * Fix cmd list mangling for large Android NDK tests.
+  * Add some autoreleasing script, to bump version, add them to stage, tag and
+    commit.
+  * Enable multiple decompressions to end up in same directory and adapt
+    frameworks to this new framework API.
+  * Adjust DownloadCenter number of threads to match number of assets to
+    download.
+  * Make BaseInstaller supporting multiple assets downloads and fix it to only
+    reflect download progress when we have all download size data. We could
+    have one download finishing up (and so global being at 100%) while other
+    downloads didn't start yet. Ensure we have all assets size before reporting
+    first download global progress.
+  * Fix as well cleaned path to not be removed.
+  * Filter in BaseInstaller to not decompress assets that are files to copy.
+  * Add a bunch of small, medium and large tests for versioning, removal, env
+    variable cleanups, parallel decompressions in the same directory, done
+    callback counts for decompression and downloads.
+  * Add a way to specify multiple ports (and hosts) in medium tests. This will
+    be used in future frameworks which rely both on https and http downloads.
+    Test tools can now expose multiple ports inside the container.
+    Changed as well all medium tests to adapt to this new API.
+  * Ensure we source .profile when executing command in container.
+  * Various changes to run medium tests even on system installed version.
+  * Save new jenkins jobs enabling medium tests and add branch-targeted jenkins
+    job to test branches not merged yet into master.
+  * Better medium tests stability support and optimization.
+  * Package new version of pexpect and add dependency markers.
+  * Some PR post-merge fixes and various refactoring.
+  * Remove WIP marker in README.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 03 Nov 2015 10:39:04 +0100
+
+ubuntu-make (15.10) wily; urgency=medium
+
+  * Fix Dartlang download due to its new website layout.
+  * Fix pycharm educational link as their linux download returned some windows
+    binary.
+  * Adapt medium tests assets to those new website layouts and new
+    certificates.
+  * Add support for frameworks to poke for download on multiple hosts (needed
+    for the Dartlang case).
+  * Add support for medium tests to have a SNI server to cope with requests
+    on multiple hosts when faking server inside the container, including
+    delivering the correct content and certificate.
+  * Ensure that probing for reinstall in frameworks is only requiring the right
+    engagement level from the user (and add tests for this).
+  * Add some generic frameworks functionality for detecting intallation state,
+    enabling to remove a lot of similar code in all frameworks.
+  * Handle properly directory which doesn't exists in archive to decompress.
+  * Ensure that a logging config selection via conffile display the selected
+    logging level.
+  * Enhance logging and debugging support.
+  * Add a bunch of new tests and raised the test coverage to reach 93%.
+  * Add missing requirements from contributor documentation. Big thanks to
+    aung for this!
+  * Make CI jenkins jobs being more resilient to random failures
+    (distro, network…).
+  * Test jenkins jobs are now archived.
+  * Misc code cleanups and dead code removal.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 08 Oct 2015 10:19:14 +0200
+
+ubuntu-make (15.09.2) wily; urgency=medium
+
+  * Ignore continuation line having to be a multiple of 4 in older pep8
+    release (making identation not aligned with above line).
+  * This then trigger new warnings for double spaces, fix them.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Sep 2015 08:00:33 +0200
+
+ubuntu-make (15.09.1) wily; urgency=medium
+
+  * Add support for installing android SDK only by Sebastian Schuberth
+    - add associated set of medium and large tests.
+  * Rationalize exit status of umake by Omer Sheikh
+    - every error now, in addition to print some errors, exits as expect with
+      an exit code of 1.
+    - add and modify large tests, to ensure that each framework (those using
+      BaseInstaller and those having some dedicated code path) are behaving
+      the same for errors.
+    - mock in medium tests bad page download to exercise the error code path
+      here as well.
+  * Fix some pep8 issues (trusty only), some small tests broken by previous
+    merges.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Sep 2015 07:24:23 +0200
+
+ubuntu-make (15.09) wily; urgency=medium
+
+  * Unity 3D editor experimental support. You can install it through:
+    umake games unity3d. Only amd64 is currently supported upstream.
+  * Fix Arduino download as upstream web pages changes. Support more release
+    version format and ensure we don't raise an exception but only log an
+    error.
+  * Add license support to Android NDK.
+  * Adapt and add large and medium tests for both Unity 3D and Android NDK.
+  * Various enhancements to enable decompressing shell-embedded archives
+    without copying entire files. Add corresponding tests.
+  * Refactor Android license parsing to be reusable to future Android SDK
+    support.
+  * Fix a bug where if license was after the download links, we wouldn't find
+    the license.
+  * Better add_to_user_env API for contributors.
+  * Minor cosmetic and small bug fixes.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 01 Sep 2015 10:51:32 +0200
+
+ubuntu-make (15.08) wily; urgency=medium
+
+  * Add scala support and add related medium and large tests. (Igor Vuk)
+  * Fix Visual Studio Code download URL as VSCode updated their download
+    mechanism on their website. (Vartan Simonian)
+  * Fix progress bar out of range exception. (Anton Antonov)
+  * Change medium VSC assets to match new download page.
+  * Do some pep8 fixes triggered by new pep8 version.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 13 Aug 2015 07:43:12 +0200
+
+ubuntu-make (0.9.2) wily; urgency=medium
+
+  * Enable language selection in firefox developer tools
+    (thanks to Omer Sheikh):
+    - Now the installation of firefox developer tools enable to choose
+      interactively one of the available language (default being US).
+    - add a --lang= parameter to switch to another language in non interactive
+      mode.
+    - additional tests and mocks for the new options and capability
+  * Prevent double error logging when a TextWithChoice doesn't get the correct
+    user's input. Adapt tests to it.
+  * Fix a double empty [] when no shortcut is present.
+  * Updated README to improve readability. Moved to more passive language.
+    (thanks Brian P. Sizemore)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 04 Aug 2015 09:06:57 +0200
+
+ubuntu-make (0.9.1) wily; urgency=medium
+
+  * Change test to prevent FTBFS with 3.5: assert_has_calls()
+  * Print whole process output before getting the pexpect exception
+    to get more info when a medium or large test is failing
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 24 Jul 2015 11:59:57 +0200
+
+ubuntu-make (0.9.0) wily; urgency=medium
+
+  * Force depending only on default python3 for the current ubuntu version.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jul 2015 10:21:29 +0200
+
+ubuntu-make (0.9) wily; urgency=medium
+
+  * New arduino support. Thanks to Tin Tvrtković to have provided most of the
+    work.
+  * Fix parsing for Visual Studio Code 32 bits as upstream page changed.
+  * Deprecate Dart Editor framework (marked for remove only) and add Dart SDK
+    new framework as per Dart 1.11, the Editor is not supported anymore.
+  * Added or adapt tests for those new cases.
+  * Refresh and add helpers to large and medium tests to factorize them much
+    more and aligning information we check from the .desktop files (exec and
+    icon paths).
+  * Remove tests data from umake runtime.
+  * Some test cleanups and mock refresh (android studio, Visual Studio Code,
+    Android NDK).
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 21 Jul 2015 09:34:45 +0200
+
+ubuntu-make (0.8.2) wily; urgency=medium
+
+  * Fix Visual Studio Code support due to new upstream archive layout and
+    web page content.
+  * Add support for 32 bits installation of VSC as now supported upstream.
+  * Refresh and adapt large and medium tests to reflect those changes.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 10 Jun 2015 09:41:49 +0200
+
+ubuntu-make (0.8.1) wily; urgency=medium
+
+  * Match Android NDK with new download URL.
+  * Adapt medium test accordingly.
+  * Fix one failing Android large test.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 08 Jun 2015 08:59:30 +0200
+
+ubuntu-make (0.8) wily; urgency=medium
+
+  * Fix icon name that changed in Android Studio 1.2. Thanks Mark Trolley for
+    this contribution!
+  * Add tests to ensure that we are checking icon file name for android
+    frameworks as well.
+  * Rewrite the access in tests for icons and executables to read directly from
+    the optional installed desktop file. Keep a way to override it for
+    frameworks without desktop file.
+  * Ensure we can remove deprecated frameworks. They only appear in shell
+    completion and --help only if you had them installed. Prevent any
+    reinstallation but only get a removal option.
+  * Addition of a full non interactive installation mode.
+  * Add tests for all those new features and fix some previous failing tests.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 07 May 2015 11:13:09 +0200
+
+ubuntu-make (0.7) vivid; urgency=medium
+
+  * Add Visual Studio Code support (under the "web" category)
+  * Fix an error message printing for the eclipse framework if the server
+    doesn't return a success code
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 30 Apr 2015 13:06:50 +0200
+
+ubuntu-make (0.6.2) vivid; urgency=medium
+
+  * New translations:
+    - Greek, Indonesian
+  * Updated translations:
+    - German, Spanish, French
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 02 Apr 2015 09:56:30 +0200
+
+ubuntu-make (0.6.1) vivid; urgency=medium
+
+  * Set dart-editor as the command to install the editor and adapt the tests
+    to this
+  * Fix some strings not marked for translations
+  * Print help for category with no default framework
+  * Fix get binary depends with empty starting line in debian/control
+  * Add missing tests deps in debian/tests/control
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 12 Mar 2015 08:14:02 +0100
+
+ubuntu-make (0.6) vivid; urgency=medium
+
+  * New IDEs support and various cleanups by Anton Antonov:
+    - rubymine
+    - pycharm educational
+    - pycharm professional
+    - webstorm
+    - phpstorm
+  * All of those covered by medium and large tests
+  * Add zsh support + tests (thanks Anton Antonov again)
+  * Various small code enhancements
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 18 Feb 2015 09:47:08 +0100
+
+ubuntu-make (0.5) vivid; urgency=medium
+
+  * Add Idea Ultimate support, thanks to Tin Tvrtković.
+  * Add Android NDK support.
+  * Add Dartlang support.
+  * Add Firefox Developer Edition support.
+  * Get new ftp download support as Intellij downloads can redirect to ftp
+    download based on location. Thank to Tin Tvrtković.
+  * Refresh de and es translations. Thanks to all contributors!
+  * Rationalize what is up for translations and refresh i18n templates
+    for new strings.
+  * Fix some is_installed() detection.
+  * Workaround a glib issue when some Unity launcher icon doesn't appear.
+  * Some tests enhancements, cleanups and fixes.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 12 Feb 2015 10:48:20 +0100
+
+ubuntu-make (0.4.1) vivid; urgency=medium
+
+  * Fix for Intellij IDEA download page, thanks to Tin Tvrtković.
+  * Add jayatana dependency for ides based on intellij so that even
+    older releases than vivid get appmenu support.
+  * Some misc test and docker container fixes.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 22 Jan 2015 09:00:45 +0100
+
+ubuntu-make (0.4) vivid; urgency=medium
+
+  * Add go support from the golang google compiler
+  * Add a game category with stencyl support
+  * Refactor and add some tests for those
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 06 Jan 2015 10:49:58 +0100
+
+ubuntu-make (0.3) vivid; urgency=medium
+
+  * New release featuring intellij IDEA and Pycharm support (from jetbrain)
+    in their community edition. Thanks to Tin Tvrtković for this work. They
+    both are covered by new tests.
+  * Add dependency on beautifulsoup for easier html parsing by Tin Tvrtković.
+  * Ensure we download Android Studio over https.
+  * Miscellaneous medium tests fixes.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 16 Dec 2014 09:33:21 +0100
+
+ubuntu-make (0.2) vivid; urgency=medium
+
+  * Releasing under new name: ubuntu-make. Handle transition by shipping
+    a temporary binary under the older name (udtc). New command is umake.
+    Note as well that the new framework environment variable is
+    UMAKE_FRAMEWORKS.
+  * Provide compatibility binary (udtc) for now in the transitional package.
+    Also move previous configuration file location to the new one.
+  * Update Standards-Version
+  * Fix Android Studio installation, now that it reached 1.0 milestone.
+  * Removing Android Eclipse (adt) from Ubuntu Make: upstream doesn't provide
+    any bundle anymore as this tools is deprecated in favor of Android Studio.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 09 Dec 2014 08:23:33 +0100
+
+ubuntu-developer-tools-center (0.1.1-0ubuntu1) vivid; urgency=medium
+
+  * Bug-fix release as Google changed their android-studio checksum from
+    md5sum to sha1sum. Implementing sha1sum largely thanks to Tin Tvrtković
+    work!
+  * Adapt tests + new tests for sha1sum.
+  * Note that the new Android Studio doesn't ship the sdk with it anymore.
+    You need to download it manually and set the path to it. Will try to
+    get in touch with the android studio developer team for this.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 04 Nov 2014 09:55:41 +0100
+
+ubuntu-developer-tools-center (0.1-0ubuntu1) vivid; urgency=medium
+
+  * Add eclipse support as a standalone IDE. Usage is: udtc ide eclipse. Thanks
+    to Tin Tvrtković for his excellent work and tests implementation.
+  * Add android adt support (through eclipse). Usage is:
+    udtc android eclipse-adt. Added tests for it as well
+  * adb and other android tools are now added to user path while installing an
+    android framework
+  * Support removal of framework. If you installed a framework and want to
+    remove it, just use: udtc android android-studio --remove
+  * Numerous typo fixes thanks to Igor Vuk
+  * Enable loading of local framework. They are controlled by UDTC_FRAMEWORKS
+    env variable which can point to any path containing local frameworks
+  * Support reinstallation in different folder than the origin one, cleaning
+    the original directory.
+  * DownloadCenter now support redirections. Thanks Tin Tvrtković for this
+    work
+  * Add support for decompressing zip files in Decompressor
+  * New and refresh translations: de, en_AU, en_CA, en_GB, es, eu, fr, hr, it,
+    pl, ru, te, zh_CN, zh_HK. Thanks to all translators for their hard work!
+  * Improve i18n support
+  * Protect against mistyping with multiple frameworks
+  * Framework support refactoring to avoid code duplication
+  * Tests fixes and refactoring for better scalability
+  * Fix logging support during test runs
+  * Reshape docker files to have fewer layers
+  * Don't raise any Exception for unexpected CLI args
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 29 Oct 2014 10:21:01 +0100
+
+ubuntu-developer-tools-center (0.0.5) utopic; urgency=medium
+
+  * Addition for the test jenkins server:
+    - Add helper to display binary depends
+    - Output xml tests and coverage report
+    - Add xunit artefacts support in runtests
+  * Some tests enhancement for working in the daily jenkins environment:
+    - Change installing in conflict package prediction.
+    - Give some time for the container in medium tests to start
+    - Remove full install timeout logic. Instead, have a timeout if there
+      is no new stdout/progress report change for a while. This ensure
+      less flakyness in case of really slow network.
+    - Remove on output testing first INFO message detection as it's a false
+      positive.
+  * No output by default when running tests:
+    - Coverage tests doesn't print any stdout or logging info unless a tests
+      is failing.
+    - Debug profile is using the debug logging configuraiton as well.
+    - Don't rely on importing tests/__init__.py to define logging format for
+      nose.
+    - Ensure subprocess (medium/large tests) set the same logging level as well.
+    - Add a stdout hanlder in subprocess as well while testing (using
+      the correct profile and be able to detect warning/errors)
+  * debian/rules:
+    - no need for --no-config for running tests anymore
+  * Misc cleanups:
+    - some refactoring of runtests
+    - remove unusued imports
+    - removed unused profile options
+    - update documentation for the new logging profiles change.
+  * Have pep8 tests passing on system version as well.
+  * Add Spanish, Basque and Chinese (Hong Kong) translations. Thanks to all
+    translators!
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 09 Sep 2014 16:48:12 +0200
+
+ubuntu-developer-tools-center (0.0.4.1) utopic; urgency=medium
+
+  * GSettings:schema has been deprecated and glib shows a warning about it.
+  Fix the deprecation by switching to schema-id which is supported in 14.04.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 01 Sep 2014 17:14:06 +0200
+
+ubuntu-developer-tools-center (0.0.4) utopic; urgency=medium
+
+  * Enhance some tests by adding more info in case of failure and decouple
+    some concerns.
+  * Fix medium tests in using server name back as sbuild supports it again.
+  * Refreshed certificates which expired and document how to get longer
+    ones.
+  * First trial to get medium tests running as autopkgtests, but disabled
+    for now (Docker permission error inside the autopkg chroot)
+  * Refactor i18n support with dropping babel and automatically run the
+    commands when setuptools is building.
+  * Add fr and zh_CN translations.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 28 Aug 2014 11:03:09 +0200
+
+ubuntu-developer-tools-center (0.0.3) utopic; urgency=medium
+
+  * Fix coverage reports by importing tested modules only when needed and
+    when overriding "packages" and "__files__", by reloading the module
+  * Some cleanups (removed unused imports)
+  * Add allow-stderr for adt tests: as nose-cov print some debug output
+    at start which makes adt failing then. As we control,
+    stderr and warnings during tests, disable this check.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 28 Aug 2014 08:12:31 +0200
+
+ubuntu-developer-tools-center (0.0.2.2) utopic; urgency=medium
+
+  * debian/control:
+    - add XS-Testsuite as some uploads may happen from trusty
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 27 Aug 2014 15:24:18 +0200
+
+ubuntu-developer-tools-center (0.0.2.1) utopic; urgency=medium
+
+  * Rebuild to run autopkgtests
+  * Fix some pep8 issues on utopic and enable them during package build
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 27 Aug 2014 15:00:29 +0200
+
+ubuntu-developer-tools-center (0.0.2) utopic; urgency=medium
+
+  * Adapt one test as we disabled the android eclipse framework
+    (not ready yet)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 11 Aug 2014 17:44:12 +0200
+
+ubuntu-developer-tools-center (0.0.1) utopic; urgency=medium
+
+  * Initial release, supporting android-studio
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 01 Aug 2014 09:37:20 +0200

@@ -1,0 +1,2 @@
+# just source that file to enable shell completion on umake
+eval "$(register-python-argcomplete bin/umake)"

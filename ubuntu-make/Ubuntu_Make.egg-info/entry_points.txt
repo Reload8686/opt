@@ -1,0 +1,4 @@
+[console_scripts]
+udtc = umake:main
+umake = umake:main
+
